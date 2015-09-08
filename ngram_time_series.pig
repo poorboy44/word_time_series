@@ -1,0 +1,10 @@
+register /usr/local/twadoop/twadoop-1.0.jar;
+register /usr/lib/pig/piggybank.jar;
+set default_parallel 1000;
+tweets_a = LOAD 'sample_tweets' USING PigStorage(',') AS (tweet:chararray, dt:chararray);
+tweets_a = FOREACH tweets_a GENERATE LOWER(piggybank.ReplaceAll(tweet, '\\n', ' ')) AS tweet, dt ;
+B = foreach tweets_a generate FLATTEN(com.twitter.twadoop.pig.piggybank.NGram(tweet, 3)) AS ngram, dt;
+C = group B by (ngram, dt);
+D = foreach C generate COUNT(B) AS ngram_count, group as ngram, dt;
+E = FILTER D BY (D.ngram_count >10);
+STORE E INTO 'word_time_series';
