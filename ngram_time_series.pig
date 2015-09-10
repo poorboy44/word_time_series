@@ -1,7 +1,7 @@
 register /usr/local/twadoop/twadoop-1.0.jar;
 register /usr/lib/pig/piggybank.jar;
 set default_parallel 1000;
-tweets_a = LOAD '2012_beer_body.txt.gz' USING PigStorage(',') AS (dt:chararray, tweet:chararray );
+tweets_a = LOAD '2012_beer_body.txt' USING PigStorage(',') AS (dt:chararray, tweet:chararray );
 --tweets_a = LIMIT tweets_a 5;
 --DUMP tweets_a;
 tweets_a = FOREACH tweets_a GENERATE LOWER(piggybank.ReplaceAll(tweet, '\\n', ' ')) AS tweet, dt ;
