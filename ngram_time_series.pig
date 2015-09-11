@@ -6,6 +6,7 @@ tweets_a = LOAD '2012_beer_body.txt' USING PigStorage(',') AS (dt:chararray, twe
 --DUMP tweets_a;
 tweets_a = FOREACH tweets_a GENERATE LOWER(piggybank.ReplaceAll(tweet, '\\n', ' ')) AS tweet, dt ;
 B = foreach tweets_a generate FLATTEN(com.twitter.twadoop.pig.piggybank.NGram(tweet, 3)) AS ngram, dt;
+B = FILTER B BY len(ngram)>2;
 C = group B by (ngram, dt);
 D = foreach C generate COUNT(B) AS ngram_count, group ;
 -- E = FILTER D BY (D.ngram_count >10);
